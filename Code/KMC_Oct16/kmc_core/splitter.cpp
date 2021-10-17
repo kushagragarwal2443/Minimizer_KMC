@@ -9,7 +9,6 @@ Date   : 2019-05-19
 */
 
 #include "splitter.h"
-#include <iostream> // Souvadra's addition
 
 //************************************************************************************************************
 // CSplitter class - splits kmers into bins according to their signatures
@@ -92,7 +91,6 @@ bool CSplitter::GetSeqLongRead(char *seq, uint32 &seq_size, uchar header_marker)
 // Return a single record from FASTA/FASTQ data
 bool CSplitter::GetSeq(char *seq, uint32 &seq_size, ReadType read_type)
 {
-	std::cout << "line 95 @splitter.cpp" << std::endl;
 	if (part_pos >= part_size)
 		return false;
 
@@ -101,12 +99,10 @@ bool CSplitter::GetSeq(char *seq, uint32 &seq_size, ReadType read_type)
 
 	if (file_type == InputType::FASTA || file_type == InputType::KMC)
 	{		
-		std::cout << "reading fasta files @104 splitter.cpp" << std::endl;
-		if (read_type == ReadType::long_read) 
+		if (read_type == ReadType::long_read)
 			return GetSeqLongRead(seq, seq_size, '>');
 		if (curr_read_len == 0)
-		{	
-			std::cout << "line 109 @splitter.cpp" << std::endl; // Souvadra's addition
+		{
 			// Title
 			c = part[part_pos++];
 			if (c != '>')
@@ -188,7 +184,6 @@ bool CSplitter::GetSeq(char *seq, uint32 &seq_size, ReadType read_type)
 	}
 	else if (file_type == InputType::FASTQ)
 	{
-		std::cout << "reading FASTQ" << std::endl;
 		if (read_type == ReadType::long_read)		
 			return GetSeqLongRead(seq, seq_size, '@');	
 	
@@ -441,6 +436,8 @@ void CSplitter::HomopolymerCompressSeq(char* seq, uint32 &seq_size)
 // Calculate statistics of m-mers
 void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, uint32* _stats)
 {
+
+	// std::cout << "\nJUST ENTERED PROCESS READS" << std::endl;
 	part = _part;
 	part_size = _part_size;
 	part_pos = 0;
@@ -449,90 +446,252 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 	uint32 seq_size;
 	pmm_reads->reserve(seq);
 
-	uint32 signature_start_pos;
-	CMmer current_signature(signature_len), end_mmer(signature_len);
+	// uint32 signature_start_pos;
+	CMmer current_signature(signature_len);
+	// CMmer end_mmer(signature_len);
+	// uint32 bin_no;
 
 	uint32 i;
-	uint32 len;//length of extended kmer
+	// uint32 len;//length of extended kmer
+
+	// KUSH ADDED THESE
+	uint32_t w_len = kmer_len;
+	uint32_t min_flag = 0;
+	uint64_t kmer_int = 0;
+	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
+  	// uint64_t shift1 = 2 * (kmer_len-1);
+	uint64_t kmer_hash = UINT64_MAX;
+	uint64_t min_hash = UINT64_MAX;
+	uint64_t min_pos = 0;
+	uint64_t min_loc = 0;
+	uint64_t buf[256]; // window size should be less than 256
+	uint64_t buf_pos = 0;
+	// KUSH ADDED THESE
 
 	while (GetSeq(seq, seq_size, read_type))
 	{
+		if (ntHashEstimator)
+			ntHashEstimator->Process(seq, seq_size);
+
 		if (homopolymer_compressed)
 			HomopolymerCompressSeq(seq, seq_size);
+		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
+		//	n_reads++;
 		i = 0;
-		len = 0;
 		while (i + kmer_len - 1 < seq_size)
 		{
 			bool contains_N = false;
 			//building first signature after 'N' or at the read begining
 			for (uint32 j = 0; j < signature_len; ++j, ++i)
+
 				if (seq[i] < 0)//'N'
 				{
 					contains_N = true;
 					break;
 				}
+
+				// ***********  Kush added this  ***********
+				else
+				{
+					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
+					kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+					buf[buf_pos] = kmer_hash;
+					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
+					{
+						min_hash = kmer_hash;
+						min_pos = buf_pos;
+						min_loc = i;
+						min_flag = 1;
+					}
+					buf_pos++;
+				}
+				// ***********  Kush added this  ***********
+
 			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
 			if (contains_N)
 			{
 				++i;
 				continue;
 			}
-			len = signature_len;
-			signature_start_pos = i - signature_len;
-			current_signature.insert(seq + signature_start_pos);
-			end_mmer.set(current_signature);
+			// std::cout << "Initial current_signature is: " << current_signature.get_string() << std::endl;
+			// std::cout << "Initial end_mmer is: " << end_mmer.get_string() << std::endl;
+
 			for (; i < seq_size; ++i)
 			{
-				if (seq[i] < 0)//'N'
-				{
-					if (len >= kmer_len)
-						_stats[current_signature.get()] += 1 + len - kmer_len;
-					len = 0;
-					++i;
-					break;
+				// Kush added this
+				uchar letter = seq[i];
+				if(letter>=0){
+					kmer_int = (kmer_int << 2 | letter) & mask1;
 				}
-				end_mmer.insert(seq[i]);
-				if (end_mmer < current_signature)//signature at the end of current k-mer is lower than current
+				kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+				buf[buf_pos] = kmer_hash;
+
+				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
 				{
-					if (len >= kmer_len)
+					min_hash = kmer_hash;
+					min_pos = buf_pos;
+					min_loc = i;
+					min_flag = 1;
+				}
+
+				if(kmer_hash < min_hash && i>=w_len+kmer_len-1) // smaller kmer found
+				{
+					if(min_hash != UINT64_MAX)
 					{
-						_stats[current_signature.get()] += 1 + len - kmer_len;
-						len = kmer_len - 1;
+						// add the current minimizer
+						current_signature.insert(seq + min_loc - kmer_len + 1);
+						_stats[current_signature.get()] += 1;
 					}
-					current_signature.set(end_mmer);
-					signature_start_pos = i - signature_len + 1;
+
+					min_hash = kmer_hash;
+					min_pos = buf_pos;
+					min_loc = i;
+					min_flag = 1;
 				}
-				else if (end_mmer == current_signature)
+
+				if(buf_pos == min_pos && min_flag == 0) // old minimizer moved out of window
 				{
-					current_signature.set(end_mmer);
-					signature_start_pos = i - signature_len + 1;
-				}
-				else if (signature_start_pos + kmer_len - 1 < i)//need to find new signature
-				{
-					_stats[current_signature.get()] += 1 + len - kmer_len;
-					len = kmer_len - 1;
-					//looking for new signature
-					++signature_start_pos;
-					//building first signature in current k-mer
-					end_mmer.insert(seq + signature_start_pos);
-					current_signature.set(end_mmer);
-					for (uint32 j = signature_start_pos + signature_len; j <= i; ++j)
+					if(i >= w_len + kmer_len - 2 && min_hash != UINT64_MAX)
 					{
-						end_mmer.insert(seq[j]);
-						if (end_mmer <= current_signature)
+						// add the current minimizer
+						current_signature.insert(seq + min_loc - kmer_len + 1);
+						_stats[current_signature.get()] += 1;
+					}
+
+					min_hash = UINT64_MAX;
+
+					uint32_t j;
+					uint32_t j_counter = 0;
+					// the two loops are necessary when there are identical k-mers
+					for (j = buf_pos + 1; j < w_len; ++j)
+					{ 
+						if (buf[j] <= min_hash) //  >= is important s.t. min is always the closest k-mer
 						{
-							current_signature.set(end_mmer);
-							signature_start_pos = j - signature_len + 1;
+							min_hash = buf[j];
+							min_pos = j;
+							min_loc = i - w_len + 1 + j_counter;
+						} 
+						
+						j_counter++;
+					}
+					for (j = 0; j <= buf_pos; ++j)
+					{
+						if (buf[j] <= min_hash)
+						{
+							min_hash = buf[j];
+							min_pos = j;
+							min_loc = i - w_len + 1 + j_counter;
 						}
+
+						j_counter++;
 					}
 				}
-				++len;
+
+				min_flag = 0;
+				if (++buf_pos == w_len) buf_pos = 0;
+				
 			}
 		}
-		if (len >= kmer_len)//last one in read
-			_stats[current_signature.get()] += 1 + len - kmer_len;
+
+		current_signature.insert(seq + min_loc - kmer_len + 1);
+		_stats[current_signature.get()] += 1;
 	}
+
 	pmm_reads->free(seq);
+
+	// part = _part;
+	// part_size = _part_size;
+	// part_pos = 0;
+
+	// char *seq;
+	// uint32 seq_size;
+	// pmm_reads->reserve(seq);
+
+	// uint32 signature_start_pos;
+	// CMmer current_signature(signature_len), end_mmer(signature_len);
+
+	// uint32 i;
+	// uint32 len;//length of extended kmer
+
+	// while (GetSeq(seq, seq_size, read_type))
+	// {
+	// 	if (homopolymer_compressed)
+	// 		HomopolymerCompressSeq(seq, seq_size);
+	// 	i = 0;
+	// 	len = 0;
+	// 	while (i + kmer_len - 1 < seq_size)
+	// 	{
+	// 		bool contains_N = false;
+	// 		//building first signature after 'N' or at the read begining
+	// 		for (uint32 j = 0; j < signature_len; ++j, ++i)
+	// 			if (seq[i] < 0)//'N'
+	// 			{
+	// 				contains_N = true;
+	// 				break;
+	// 			}
+	// 		//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
+	// 		if (contains_N)
+	// 		{
+	// 			++i;
+	// 			continue;
+	// 		}
+	// 		len = signature_len;
+	// 		signature_start_pos = i - signature_len;
+	// 		current_signature.insert(seq + signature_start_pos);
+	// 		end_mmer.set(current_signature);
+	// 		for (; i < seq_size; ++i)
+	// 		{
+	// 			if (seq[i] < 0)//'N'
+	// 			{
+	// 				if (len >= kmer_len)
+	// 					_stats[current_signature.get()] += 1 + len - kmer_len;
+	// 				len = 0;
+	// 				++i;
+	// 				break;
+	// 			}
+	// 			end_mmer.insert(seq[i]);
+	// 			if (end_mmer < current_signature)//signature at the end of current k-mer is lower than current
+	// 			{
+	// 				if (len >= kmer_len)
+	// 				{
+	// 					_stats[current_signature.get()] += 1 + len - kmer_len;
+	// 					len = kmer_len - 1;
+	// 				}
+	// 				current_signature.set(end_mmer);
+	// 				signature_start_pos = i - signature_len + 1;
+	// 			}
+	// 			else if (end_mmer == current_signature)
+	// 			{
+	// 				current_signature.set(end_mmer);
+	// 				signature_start_pos = i - signature_len + 1;
+	// 			}
+	// 			else if (signature_start_pos + kmer_len - 1 < i)//need to find new signature
+	// 			{
+	// 				_stats[current_signature.get()] += 1 + len - kmer_len;
+	// 				len = kmer_len - 1;
+	// 				//looking for new signature
+	// 				++signature_start_pos;
+	// 				//building first signature in current k-mer
+	// 				end_mmer.insert(seq + signature_start_pos);
+	// 				current_signature.set(end_mmer);
+	// 				for (uint32 j = signature_start_pos + signature_len; j <= i; ++j)
+	// 				{
+	// 					end_mmer.insert(seq[j]);
+	// 					if (end_mmer <= current_signature)
+	// 					{
+	// 						current_signature.set(end_mmer);
+	// 						signature_start_pos = j - signature_len + 1;
+	// 					}
+	// 				}
+	// 			}
+	// 			++len;
+	// 		}
+	// 	}
+	// 	if (len >= kmer_len)//last one in read
+	// 		_stats[current_signature.get()] += 1 + len - kmer_len;
+	// }
+	// pmm_reads->free(seq);
+
 }
 
 //----------------------------------------------------------------------------------
@@ -557,9 +716,147 @@ bool CSplitter::ProcessReadsOnlyEstimate(uchar* _part, uint64 _part_size, ReadTy
 
 //----------------------------------------------------------------------------------
 // Process the reads from the given FASTQ file part
+// bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type)
+// {
+// 	// std::cout << "\nJUST ENTERED PROCESS READS" << std::endl;
+// 	part = _part;
+// 	part_size = _part_size;
+// 	part_pos = 0;
+
+// 	char *seq;
+// 	uint32 seq_size;
+// 	pmm_reads->reserve(seq);
+
+// 	uint32 signature_start_pos;
+// 	CMmer current_signature(signature_len), end_mmer(signature_len);
+// 	uint32 bin_no;
+
+// 	uint32 i;
+// 	uint32 len;//length of extended kmer
+
+// 	while (GetSeq(seq, seq_size, read_type))
+// 	{
+// 		// std::cout << "seq is: " << seq << std::endl;	
+
+// 		if (ntHashEstimator)
+// 			ntHashEstimator->Process(seq, seq_size);
+
+// 		if (homopolymer_compressed)
+// 			HomopolymerCompressSeq(seq, seq_size);
+// 		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
+// 		//	n_reads++;
+// 		i = 0;
+// 		len = 0;
+// 		while (i + kmer_len - 1 < seq_size)
+// 		{
+// 			bool contains_N = false;
+// 			//building first signature after 'N' or at the read begining
+// 			for (uint32 j = 0; j < signature_len; ++j, ++i)
+// 				if (seq[i] < 0)//'N'
+// 				{
+// 					contains_N = true;
+// 					break;
+// 				}
+// 			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
+// 			if (contains_N)
+// 			{
+// 				++i;
+// 				continue;
+// 			}
+// 			len = signature_len;
+// 			signature_start_pos = i - signature_len;
+// 			current_signature.insert(seq + signature_start_pos);
+// 			end_mmer.set(current_signature);
+
+// 			// std::cout << "Initial current_signature is: " << current_signature.get_string() << std::endl;
+// 			// std::cout << "Initial end_mmer is: " << end_mmer.get_string() << std::endl;
+
+// 			for (; i < seq_size; ++i)
+// 			{
+// 				if (seq[i] < 0)//'N'
+// 				{
+// 					if (len >= kmer_len)
+// 					{
+// 						bin_no = s_mapper->get_bin_id(current_signature.get());
+// 						bins[bin_no]->PutExtendedKmer(seq + i - len, len);
+// 					}
+// 					len = 0;
+// 					++i;
+// 					break;
+// 				}
+// 				end_mmer.insert(seq[i]);
+// 				// std::cout << "end_mmer is: " << end_mmer.get_string() << std::endl;
+// 				if (end_mmer < current_signature)//signature at the end of current k-mer is lower than current
+// 				{
+// 					if (len >= kmer_len)
+// 					{
+// 						bin_no = s_mapper->get_bin_id(current_signature.get());
+// 						bins[bin_no]->PutExtendedKmer(seq + i - len, len);
+// 						len = kmer_len - 1;
+// 					}
+// 					current_signature.set(end_mmer);
+// 					// std::cout << "current_signature is: " << current_signature.get_string() << std::endl;
+// 					signature_start_pos = i - signature_len + 1;
+// 				}
+// 				else if (end_mmer == current_signature)
+// 				{
+// 					current_signature.set(end_mmer);
+// 					// std::cout << "current_signature is: " << current_signature.get_string() << std::endl;
+// 					signature_start_pos = i - signature_len + 1;
+// 				}
+// 				else if (signature_start_pos + kmer_len - 1 < i)//need to find new signature
+// 				{
+// 					bin_no = s_mapper->get_bin_id(current_signature.get());
+// 					bins[bin_no]->PutExtendedKmer(seq + i - len, len);
+// 					len = kmer_len - 1;
+// 					//looking for new signature
+// 					++signature_start_pos;
+// 					//building first signature in current k-mer
+// 					end_mmer.insert(seq + signature_start_pos);
+// 					// std::cout << "end_mmer is: " << end_mmer.get_string() << std::endl;
+// 					current_signature.set(end_mmer);
+// 					// std::cout << "current_signature is: " << current_signature.get_string() << std::endl;
+// 					for (uint32 j = signature_start_pos + signature_len; j <= i; ++j)
+// 					{
+// 						end_mmer.insert(seq[j]);
+// 						// std::cout << "end_mmer is: " << end_mmer.get_string() << std::endl;
+// 						if (end_mmer <= current_signature)
+// 						{
+// 							current_signature.set(end_mmer);
+// 							// std::cout << "current_signature is: " << current_signature.get_string() << std::endl;
+// 							signature_start_pos = j - signature_len + 1;
+// 						}
+// 					}
+// 				}
+// 				++len;
+// 				if (len == kmer_len + 255) //one byte is used to store counter of additional symbols in extended k-mer
+// 				{
+// 					bin_no = s_mapper->get_bin_id(current_signature.get());
+// 					bins[bin_no]->PutExtendedKmer(seq + i + 1 - len, len);
+// 					i -= kmer_len - 2;
+// 					len = 0;
+// 					break;
+// 				}
+
+// 			}
+// 		}
+// 		if (len >= kmer_len)//last one in read
+// 		{
+// 			bin_no = s_mapper->get_bin_id(current_signature.get());
+// 			bins[bin_no]->PutExtendedKmer(seq + i - len, len);
+// 		}
+// 	}
+
+// 	pmm_reads->free(seq);
+
+// 	return true;
+// }
+
+// -------------------------------------------------------------------------------------------
+// Process the reads from the given FASTQ file part
 bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type)
 {
-	std::cout << "line 558 @ splitter.cpp" << std::endl;
+	// std::cout << "\nJUST ENTERED PROCESS READS" << std::endl;
 	part = _part;
 	part_size = _part_size;
 	part_pos = 0;
@@ -568,15 +865,30 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 	uint32 seq_size;
 	pmm_reads->reserve(seq);
 
-	uint32 signature_start_pos;
-	CMmer current_signature(signature_len), end_mmer(signature_len);
+	// uint32 signature_start_pos;
+	CMmer current_signature(signature_len);
+	// CMmer end_mmer(signature_len);
 	uint32 bin_no;
 
 	uint32 i;
-	uint32 len;//length of extended kmer
+	// uint32 len;//length of extended kmer
+
+	// KUSH ADDED THESE
+	uint32_t w_len = kmer_len;
+	uint32_t min_flag = 0;
+	uint64_t kmer_int = 0;
+	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
+  	// uint64_t shift1 = 2 * (kmer_len-1);
+	uint64_t kmer_hash = UINT64_MAX;
+	uint64_t min_hash = UINT64_MAX;
+	uint64_t min_pos = 0;
+	uint64_t min_loc = 0;
+	uint64_t buf[256]; // window size should be less than 256
+	uint64_t buf_pos = 0;
+	// KUSH ADDED THESE
 
 	while (GetSeq(seq, seq_size, read_type))
-	{		
+	{
 		if (ntHashEstimator)
 			ntHashEstimator->Process(seq, seq_size);
 
@@ -585,95 +897,126 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
 		//	n_reads++;
 		i = 0;
-		len = 0;
 		while (i + kmer_len - 1 < seq_size)
 		{
 			bool contains_N = false;
-			std::cout << seq << std::endl; // Souvadra's addition
 			//building first signature after 'N' or at the read begining
 			for (uint32 j = 0; j < signature_len; ++j, ++i)
+
 				if (seq[i] < 0)//'N'
 				{
 					contains_N = true;
 					break;
 				}
+
+				// ***********  Kush added this  ***********
+				else
+				{
+					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
+					kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+					buf[buf_pos] = kmer_hash;
+					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
+					{
+						min_hash = kmer_hash;
+						min_pos = buf_pos;
+						min_loc = i;
+						min_flag = 1;
+					}
+					buf_pos++;
+				}
+				// ***********  Kush added this  ***********
+
 			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
 			if (contains_N)
 			{
 				++i;
 				continue;
 			}
-			len = signature_len;
-			signature_start_pos = i - signature_len;
-			current_signature.insert(seq + signature_start_pos);
-			end_mmer.set(current_signature);
+			// std::cout << "Initial current_signature is: " << current_signature.get_string() << std::endl;
+			// std::cout << "Initial end_mmer is: " << end_mmer.get_string() << std::endl;
+
 			for (; i < seq_size; ++i)
 			{
-				if (seq[i] < 0)//'N'
-				{
-					if (len >= kmer_len)
-					{
-						bin_no = s_mapper->get_bin_id(current_signature.get());
-						bins[bin_no]->PutExtendedKmer(seq + i - len, len);
-					}
-					len = 0;
-					++i;
-					break;
+				// Kush added this
+				uchar letter = seq[i];
+				if(letter>=0){
+					kmer_int = (kmer_int << 2 | letter) & mask1;
 				}
-				end_mmer.insert(seq[i]);
-				if (end_mmer < current_signature)//signature at the end of current k-mer is lower than current
+				kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+				buf[buf_pos] = kmer_hash;
+
+				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
 				{
-					if (len >= kmer_len)
-					{
-						bin_no = s_mapper->get_bin_id(current_signature.get());
-						bins[bin_no]->PutExtendedKmer(seq + i - len, len);
-						len = kmer_len - 1;
-					}
-					current_signature.set(end_mmer);
-					signature_start_pos = i - signature_len + 1;
-				}
-				else if (end_mmer == current_signature)
-				{
-					current_signature.set(end_mmer);
-					signature_start_pos = i - signature_len + 1;
-				}
-				else if (signature_start_pos + kmer_len - 1 < i)//need to find new signature
-				{
-					bin_no = s_mapper->get_bin_id(current_signature.get());
-					bins[bin_no]->PutExtendedKmer(seq + i - len, len);
-					len = kmer_len - 1;
-					//looking for new signature
-					++signature_start_pos;
-					//building first signature in current k-mer
-					end_mmer.insert(seq + signature_start_pos);
-					current_signature.set(end_mmer);
-					for (uint32 j = signature_start_pos + signature_len; j <= i; ++j)
-					{
-						end_mmer.insert(seq[j]);
-						if (end_mmer <= current_signature)
-						{
-							current_signature.set(end_mmer);
-							signature_start_pos = j - signature_len + 1;
-						}
-					}
-				}
-				++len;
-				if (len == kmer_len + 255) //one byte is used to store counter of additional symbols in extended k-mer
-				{
-					bin_no = s_mapper->get_bin_id(current_signature.get());
-					bins[bin_no]->PutExtendedKmer(seq + i + 1 - len, len);
-					i -= kmer_len - 2;
-					len = 0;
-					break;
+					min_hash = kmer_hash;
+					min_pos = buf_pos;
+					min_loc = i;
+					min_flag = 1;
 				}
 
+				if(kmer_hash < min_hash && i>=w_len+kmer_len-1) // smaller kmer found
+				{
+					if(min_hash != UINT64_MAX)
+					{
+						// add the current minimizer
+						current_signature.insert(seq + min_loc - kmer_len + 1);
+						bin_no = s_mapper->get_bin_id(current_signature.get());
+						bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
+					}
+
+					min_hash = kmer_hash;
+					min_pos = buf_pos;
+					min_loc = i;
+					min_flag = 1;
+				}
+
+				if(buf_pos == min_pos && min_flag == 0) // old minimizer moved out of window
+				{
+					if(i >= w_len + kmer_len - 2 && min_hash != UINT64_MAX)
+					{
+						// add the current minimizer
+						current_signature.insert(seq + min_loc - kmer_len + 1);
+						bin_no = s_mapper->get_bin_id(current_signature.get());
+						bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
+					}
+
+					min_hash = UINT64_MAX;
+
+					uint32_t j;
+					uint32_t j_counter = 0;
+					// the two loops are necessary when there are identical k-mers
+					for (j = buf_pos + 1; j < w_len; ++j)
+					{ 
+						if (buf[j] <= min_hash) //  >= is important s.t. min is always the closest k-mer
+						{
+							min_hash = buf[j];
+							min_pos = j;
+							min_loc = i - w_len + 1 + j_counter;
+						} 
+						
+						j_counter++;
+					}
+					for (j = 0; j <= buf_pos; ++j)
+					{
+						if (buf[j] <= min_hash)
+						{
+							min_hash = buf[j];
+							min_pos = j;
+							min_loc = i - w_len + 1 + j_counter;
+						}
+
+						j_counter++;
+					}
+				}
+
+				min_flag = 0;
+				if (++buf_pos == w_len) buf_pos = 0;
+				
 			}
 		}
-		if (len >= kmer_len)//last one in read
-		{
-			bin_no = s_mapper->get_bin_id(current_signature.get());
-			bins[bin_no]->PutExtendedKmer(seq + i - len, len);
-		}
+
+		current_signature.insert(seq + min_loc - kmer_len + 1);
+		bin_no = s_mapper->get_bin_id(current_signature.get());
+		bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
 	}
 
 	pmm_reads->free(seq);
@@ -950,7 +1293,7 @@ template <typename COUNTER_TYPE> CWSmallKSplitter<COUNTER_TYPE>::CWSmallKSplitte
 // Destructor
 template <typename COUNTER_TYPE> CWSmallKSplitter<COUNTER_TYPE>::~CWSmallKSplitter()
 {
-} 
+}
 
 //----------------------------------------------------------------------------------
 // Execution
