@@ -16,4 +16,15 @@ If you want to change number of reads or length of reads go to fasta_simulator.p
 
 ---
 
+## Update 2: 17th October
+
+---
+Current code present in Code/KMC_Oct16 works with and without -C flag. 
+
+When number of reads given increases, there is some segmentation fault (***smashing detected***). Otherwise code works perfectly fine.
+
+For running in canonical mode make the variable **canonical_flag = 1** in both ProcessReads and CalcStats. First output on running master.sh is for non_canonical mode and second is for canonical mode.
+
+---
+
 

@@ -456,10 +456,13 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 	// KUSH ADDED THESE
 	uint32_t w_len = kmer_len;
+	uint32_t canonical_flag = 1;
 	uint32_t min_flag = 0;
 	uint64_t kmer_int = 0;
+	uint64_t rcm_kmer_int = 0;
+	uint64_t can_int = 0;
 	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
-  	// uint64_t shift1 = 2 * (kmer_len-1);
+  	uint64_t shift1 = 2 * (kmer_len-1);
 	uint64_t kmer_hash = UINT64_MAX;
 	uint64_t min_hash = UINT64_MAX;
 	uint64_t min_pos = 0;
@@ -494,7 +497,15 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 				else
 				{
 					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
-					kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
+					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 					buf[buf_pos] = kmer_hash;
 					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
 					{
@@ -522,8 +533,16 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 				uchar letter = seq[i];
 				if(letter>=0){
 					kmer_int = (kmer_int << 2 | letter) & mask1;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^letter) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
 				}
-				kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+				kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 				buf[buf_pos] = kmer_hash;
 
 				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
@@ -875,10 +894,13 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 
 	// KUSH ADDED THESE
 	uint32_t w_len = kmer_len;
+	uint32_t canonical_flag = 0;
 	uint32_t min_flag = 0;
 	uint64_t kmer_int = 0;
+	uint64_t rcm_kmer_int = 0;
+	uint64_t can_int = 0;
 	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
-  	// uint64_t shift1 = 2 * (kmer_len-1);
+  	uint64_t shift1 = 2 * (kmer_len-1);
 	uint64_t kmer_hash = UINT64_MAX;
 	uint64_t min_hash = UINT64_MAX;
 	uint64_t min_pos = 0;
@@ -913,7 +935,15 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 				else
 				{
 					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
-					kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
+					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 					buf[buf_pos] = kmer_hash;
 					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
 					{
@@ -940,9 +970,17 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 				// Kush added this
 				uchar letter = seq[i];
 				if(letter>=0){
-					kmer_int = (kmer_int << 2 | letter) & mask1;
+					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
 				}
-				kmer_hash = hash64(kmer_int, mask1) << 8 | kmer_len;
+				kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 				buf[buf_pos] = kmer_hash;
 
 				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window

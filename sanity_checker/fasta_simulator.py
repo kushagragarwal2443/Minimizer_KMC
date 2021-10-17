@@ -2,7 +2,7 @@ import random
 
 write_file = open("simulated_fasta.fasta", "w+")
 
-num_sequences = 1
+num_sequences = 10
 length_sequence = 10000
 
 for i in range(num_sequences):
