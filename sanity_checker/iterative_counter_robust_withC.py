@@ -1,5 +1,6 @@
 from Bio import SeqIO
 import numpy as np
+import sys
 
 def hasher(key, mask):
 
@@ -165,8 +166,9 @@ def write_dicti(dicti, write_file):
 
 def main():
 
-    k = 25
-    w = 25
+    args = sys.argv
+    k = int(str(args[1]))
+    w = int(str(args[2]))
     fasta_sequences = SeqIO.parse(open("simulated_fasta.fasta"),'fasta')
     write_file = open("expected.fasta", "w+")
     dicti = create_dict(fasta_sequences, k, w)

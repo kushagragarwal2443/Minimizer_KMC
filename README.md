@@ -27,4 +27,14 @@ For running in canonical mode make the variable **canonical_flag = 1** in both P
 
 ---
 
+## Update 3: 17th October Evening
+
+---
+
+GOD EXISTS !! **smashing detected** solved by building everytime before running. 
+
+Minor error when multiple reads are present still exists. 300 errors in 7.5 lac minimizers when simulating 10**5 reads of size 1000 each.
+
+---
+
 

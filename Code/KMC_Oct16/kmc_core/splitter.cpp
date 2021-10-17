@@ -894,7 +894,7 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 
 	// KUSH ADDED THESE
 	uint32_t w_len = kmer_len;
-	uint32_t canonical_flag = 0;
+	uint32_t canonical_flag = 1;
 	uint32_t min_flag = 0;
 	uint64_t kmer_int = 0;
 	uint64_t rcm_kmer_int = 0;
