@@ -37,4 +37,12 @@ Minor error when multiple reads are present still exists. 300 errors in 7.5 lac 
 
 ---
 
+## Update 4: 19th October Afternoon
+
+All errors are now gone. Code works perfectly!!
+
+Caviat: When read lengths are greater than 10**7, then error occurs as KMC tries to split a read into multiple subsequences
+
+---
+
 

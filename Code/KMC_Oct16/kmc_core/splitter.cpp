@@ -505,8 +505,13 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 							can_int = rcm_kmer_int;
 						}
 					}
-					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-					buf[buf_pos] = kmer_hash;
+
+					if(i>=kmer_len-1)
+					{
+						kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+						buf[buf_pos] = kmer_hash;
+					}
+					
 					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
 					{
 						min_hash = kmer_hash;
@@ -514,7 +519,12 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 						min_loc = i;
 						min_flag = 1;
 					}
-					buf_pos++;
+
+					if(i>=kmer_len-1)
+					{
+						buf_pos++;
+					}
+
 				}
 				// ***********  Kush added this  ***********
 
@@ -542,8 +552,12 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 						}
 					}
 				}
-				kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-				buf[buf_pos] = kmer_hash;
+
+				if(i>=kmer_len-1)
+				{
+					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+					buf[buf_pos] = kmer_hash;
+				}
 
 				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
 				{
@@ -568,9 +582,9 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 					min_flag = 1;
 				}
 
-				if(buf_pos == min_pos && min_flag == 0) // old minimizer moved out of window
+				if(buf_pos == min_pos && min_flag == 0 && i>=kmer_len-1) // old minimizer moved out of window
 				{
-					if(i >= w_len + kmer_len - 2 && min_hash != UINT64_MAX)
+					if(i >= w_len + kmer_len - 1 && min_hash != UINT64_MAX)
 					{
 						// add the current minimizer
 						current_signature.insert(seq + min_loc - kmer_len + 1);
@@ -607,7 +621,10 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 				}
 
 				min_flag = 0;
-				if (++buf_pos == w_len) buf_pos = 0;
+				if(i>=kmer_len-1)
+				{
+					if (++buf_pos == w_len) buf_pos = 0;
+				}
 				
 			}
 		}
@@ -943,8 +960,13 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 							can_int = rcm_kmer_int;
 						}
 					}
-					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-					buf[buf_pos] = kmer_hash;
+
+					if(i>=kmer_len-1)
+					{
+						kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+						buf[buf_pos] = kmer_hash;
+					}
+					
 					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
 					{
 						min_hash = kmer_hash;
@@ -952,7 +974,12 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 						min_loc = i;
 						min_flag = 1;
 					}
-					buf_pos++;
+
+					if(i>=kmer_len-1)
+					{
+						buf_pos++;
+					}
+
 				}
 				// ***********  Kush added this  ***********
 
@@ -980,9 +1007,13 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 						}
 					}
 				}
-				kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-				buf[buf_pos] = kmer_hash;
 
+				if(i>=kmer_len-1)
+				{
+					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+					buf[buf_pos] = kmer_hash;
+				}
+				
 				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
 				{
 					min_hash = kmer_hash;
@@ -1007,9 +1038,9 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 					min_flag = 1;
 				}
 
-				if(buf_pos == min_pos && min_flag == 0) // old minimizer moved out of window
+				if(buf_pos == min_pos && min_flag == 0 && i>=kmer_len-1) // old minimizer moved out of window
 				{
-					if(i >= w_len + kmer_len - 2 && min_hash != UINT64_MAX)
+					if(i >= w_len + kmer_len - 1 && min_hash != UINT64_MAX)
 					{
 						// add the current minimizer
 						current_signature.insert(seq + min_loc - kmer_len + 1);
@@ -1047,7 +1078,10 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 				}
 
 				min_flag = 0;
-				if (++buf_pos == w_len) buf_pos = 0;
+				if(i>=kmer_len-1)
+				{
+					if (++buf_pos == w_len) buf_pos = 0;
+				}
 				
 			}
 		}
@@ -1223,6 +1257,7 @@ void CWSplitter::operator()()
 		uchar *part;
 		uint64 size;
 		ReadType read_type;
+		
 		if (pq->pop(part, size, read_type))
 		{			
 			spl->ProcessReads(part, size, read_type);
@@ -1290,6 +1325,7 @@ void CWStatsSplitter::operator()()
 	{
 		uchar *part;
 		uint64 size;
+		
 		ReadType read_type;
 		if (spq->pop(part, size, read_type))
 		{
@@ -1393,6 +1429,7 @@ void CWEstimateOnlySplitter::operator()()
 		uchar* part;
 		uint64 size;
 		ReadType read_type;
+		
 		if (pq->pop(part, size, read_type))
 		{
 			spl->ProcessReadsOnlyEstimate(part, size, read_type);
