@@ -11,6 +11,8 @@
 #ifndef _MMER_H
 #define _MMER_H
 #include <cinttypes>
+#include <iostream>
+#include <stdio.h>
 #ifndef MIN
 #define MIN(x,y)	((x) < (y) ? (x) : (y))
 #endif
@@ -182,7 +184,10 @@ inline void CMmer::insert(const char* seq)
 		str = (seq[0] << 14) + (seq[1] << 12) + (seq[2] << 10) + (seq[3] << 8) + (seq[4] << 6) + (seq[5] << 4) + (seq[6] << 2) + (seq[7]);
 		break;
 	case 9:
+		std::cout << "CASE 9" << std::endl;
 		str = (seq[0] << 16) + (seq[1] << 14) + (seq[2] << 12) + (seq[3] << 10) + (seq[4] << 8) + (seq[5] << 6) + (seq[6] << 4) + (seq[7] << 2) + (seq[8]);
+		std::cout << str << std::endl;
+		std::cout << "PASSED INSERT" << std::endl;
 		break;
 	case 10:
 		str = (seq[0] << 18) + (seq[1] << 16) + (seq[2] << 14) + (seq[3] << 12) + (seq[4] << 10) + (seq[5] << 8) + (seq[6] << 6) + (seq[7] << 4) + (seq[8] << 2) + (seq[9]);
@@ -194,7 +199,9 @@ inline void CMmer::insert(const char* seq)
 		break;
 	}
 
+	std::cout << "HELLO" << std::endl;
 	current_val = norm[str];
+	std::cout << "BYE" << std::endl;
 }
 
 

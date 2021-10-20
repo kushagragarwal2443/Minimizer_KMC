@@ -45,4 +45,10 @@ Caviat: When read lengths are greater than 10**7, then error occurs as KMC tries
 
 ---
 
+## Update 5: 20th October Afternoon
+
+When a read has a N character it gets skipped. Code working.
+
+---
+
 

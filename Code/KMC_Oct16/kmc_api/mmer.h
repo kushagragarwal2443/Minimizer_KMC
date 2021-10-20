@@ -8,9 +8,12 @@
   Date   : 2019-05-19
 */
 
+#include <cinttypes>
+
 #ifndef _MMER_H
 #define _MMER_H
-#include <cinttypes>
+#include <stdio.h>
+#include <iostream>
 #ifndef MIN
 #define MIN(x,y)	((x) < (y) ? (x) : (y))
 #endif
@@ -175,32 +178,47 @@ inline void CMmer::insert(const char* seq)
 {
 	switch (len)
 	{
-	case 5: 
-		str = (seq[0] << 8) + (seq[1] << 6) + (seq[2] << 4) + (seq[3] << 2) + (seq[4]);
-		break;
-	case 6:
-		str = (seq[0] << 10) + (seq[1] << 8) + (seq[2] << 6) + (seq[3] << 4) + (seq[4] << 2) + (seq[5]);
-		break;
-	case 7:
-		str = (seq[0] << 12) + (seq[1] << 10) + (seq[2] << 8) + (seq[3] << 6) + (seq[4] << 4 ) + (seq[5] << 2) + (seq[6]);
-		break;
-	case 8:
-		str = (seq[0] << 14) + (seq[1] << 12) + (seq[2] << 10) + (seq[3] << 8) + (seq[4] << 6) + (seq[5] << 4) + (seq[6] << 2) + (seq[7]);
-		break;
-	case 9:
-		str = (seq[0] << 16) + (seq[1] << 14) + (seq[2] << 12) + (seq[3] << 10) + (seq[4] << 8) + (seq[5] << 6) + (seq[6] << 4) + (seq[7] << 2) + (seq[8]);
-		break;
-	case 10:
-		str = (seq[0] << 18) + (seq[1] << 16) + (seq[2] << 14) + (seq[3] << 12) + (seq[4] << 10) + (seq[5] << 8) + (seq[6] << 6) + (seq[7] << 4) + (seq[8] << 2) + (seq[9]);
-		break;
-	case 11:
-		str = (seq[0] << 20) + (seq[1] << 18) + (seq[2] << 16) + (seq[3] << 14) + (seq[4] << 12) + (seq[5] << 10) + (seq[6] << 8) + (seq[7] << 6) + (seq[8] << 4) + (seq[9] << 2) + (seq[10]);
-		break;
-	default:
-		break;
-	}
+		case 5: 
+			str = (seq[0] << 8) + (seq[1] << 6) + (seq[2] << 4) + (seq[3] << 2) + (seq[4]);
+			break;
+		case 6:
+			str = (seq[0] << 10) + (seq[1] << 8) + (seq[2] << 6) + (seq[3] << 4) + (seq[4] << 2) + (seq[5]);
+			break;
+		case 7:
+			str = (seq[0] << 12) + (seq[1] << 10) + (seq[2] << 8) + (seq[3] << 6) + (seq[4] << 4 ) + (seq[5] << 2) + (seq[6]);
+			break;
+		case 8:
+			str = (seq[0] << 14) + (seq[1] << 12) + (seq[2] << 10) + (seq[3] << 8) + (seq[4] << 6) + (seq[5] << 4) + (seq[6] << 2) + (seq[7]);
+			break;
+		case 9:
+			// std::cout << "CASE 9" << std::endl;
 
+			// std::cout << seq[0] << std::endl;
+			// std::cout << seq[1] << std::endl;
+			// std::cout << seq[2] << std::endl;
+			// std::cout << seq[3] << std::endl;
+			// std::cout << seq[4] << std::endl;
+			// std::cout << seq[5] << std::endl;
+			// std::cout << seq[6] << std::endl;
+			// std::cout << seq[7] << std::endl;
+			// std::cout << seq[8] << std::endl;
+
+			str = (seq[0] << 16) + (seq[1] << 14) + (seq[2] << 12) + (seq[3] << 10) + (seq[4] << 8) + (seq[5] << 6) + (seq[6] << 4) + (seq[7] << 2) + (seq[8]);
+			// std::cout << str << std::endl;
+			// std::cout << "PASSED INSERT" << std::endl;
+			break;
+		case 10:
+			str = (seq[0] << 18) + (seq[1] << 16) + (seq[2] << 14) + (seq[3] << 12) + (seq[4] << 10) + (seq[5] << 8) + (seq[6] << 6) + (seq[7] << 4) + (seq[8] << 2) + (seq[9]);
+			break;
+		case 11:
+			str = (seq[0] << 20) + (seq[1] << 18) + (seq[2] << 16) + (seq[3] << 14) + (seq[4] << 12) + (seq[5] << 10) + (seq[6] << 8) + (seq[7] << 6) + (seq[8] << 4) + (seq[9] << 2) + (seq[10]);
+			break;
+		default:
+			break;
+	}
+	// std::cout << "HELLO" << std::endl;
 	current_val = norm[str];
+	// std::cout << "BYE" << std::endl;
 }
 
 
