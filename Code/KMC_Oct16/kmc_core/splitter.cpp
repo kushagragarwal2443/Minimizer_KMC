@@ -9,7 +9,6 @@ Date   : 2019-05-19
 */
 
 #include "splitter.h"
-#include <iostream>
 
 //************************************************************************************************************
 // CSplitter class - splits kmers into bins according to their signatures
@@ -85,6 +84,8 @@ bool CSplitter::GetSeqLongRead(char *seq, uint32 &seq_size, uchar header_marker)
 		part_pos -= kmer_len - 1;
 	return true;
 }
+
+
 
 //----------------------------------------------------------------------------------
 // Return a single record from FASTA/FASTQ data
@@ -416,6 +417,7 @@ bool CSplitter::GetSeq(char *seq, uint32 &seq_size, ReadType read_type)
 	}
 	return (c == '\n' || c == '\r');
 }
+
 //----------------------------------------------------------------------------------
 void CSplitter::HomopolymerCompressSeq(char* seq, uint32 &seq_size)
 {
@@ -444,13 +446,13 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 	uint32 seq_size;
 	pmm_reads->reserve(seq);
 
-	uint32 signature_start_pos;
-	CMmer current_signature(signature_len), end_mmer(signature_len);
+	// uint32 signature_start_pos;
+	CMmer current_signature(signature_len);
 	// CMmer end_mmer(signature_len);
 	// uint32 bin_no;
 
 	uint32 i;
-	uint32 len;//length of extended kmer
+	// uint32 len;//length of extended kmer
 
 	// KUSH ADDED THESE
 	uint32_t w_len = kmer_len;
@@ -471,86 +473,27 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 	while (GetSeq(seq, seq_size, read_type))
 	{
-		// std::cout << "line 473" << std::endl;
-
-		// if (ntHashEstimator)
-		// 	ntHashEstimator->Process(seq, seq_size);
-
-		// std::cout << "line 478" << std::endl;
+		if (ntHashEstimator)
+			ntHashEstimator->Process(seq, seq_size);
 
 		if (homopolymer_compressed)
 			HomopolymerCompressSeq(seq, seq_size);
-
-		// std::cout << "line 483" << std::endl;
 		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
 		//	n_reads++;
 		i = 0;
-		len = 0;
-		bool contains_N = false;
 		while (i + kmer_len - 1 < seq_size)
 		{
-			// std::cout << "line 489" << std::endl;
+			bool contains_N = false;
 			//building first signature after 'N' or at the read begining
-			// for (uint32 j = 0; j < signature_len; ++j, ++i)
-			// {
-			// 	if (seq[i] < 0)//'N'
-			// 	{
-			// 		contains_N = true;
-			// 		break;
-			// 	}
+			for (uint32 j = 0; j < signature_len; ++j, ++i)
 
-			// 	// ***********  Kush added this  ***********
-			// 	else
-			// 	{
-			// 		kmer_int = (kmer_int << 2 | seq[i]) & mask1;
-			// 		can_int = kmer_int;
-			// 		if (canonical_flag) 
-			// 		{
-			// 			rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
-			// 			if(rcm_kmer_int < kmer_int){
-			// 				can_int = rcm_kmer_int;
-			// 			}
-			// 		}
-
-			// 		if(i>=kmer_len-1)
-			// 		{
-			// 			kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-			// 			buf[buf_pos] = kmer_hash;
-			// 		}
-					
-			// 		if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
-			// 		{
-			// 			min_hash = kmer_hash;
-			// 			min_pos = buf_pos;
-			// 			min_loc = i;
-			// 			min_flag = 1;
-			// 		}
-
-			// 		if(i>=kmer_len-1)
-			// 		{
-			// 			buf_pos++;
-			// 		}
-
-			// 	}
-			// }
-				// ***********  Kush added this  ***********
-			
-			// std::cout << "line 537" << std::endl;
-
-			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
-			
-			for (; i < seq_size; ++i)
-			{
-				// std::cout << "line 549" << std::endl;
-				// Kush added this
-				// std::cout << "line 552" << std::endl;
-				if(seq[i] < 0)
+				if (seq[i] < 0)//'N'
 				{
-					len = 0;
 					contains_N = true;
-					// ++i;
 					break;
 				}
+
+				// ***********  Kush added this  ***********
 				else
 				{
 					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
@@ -562,16 +505,59 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 							can_int = rcm_kmer_int;
 						}
 					}
+
+					if(i>=kmer_len-1)
+					{
+						kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+						buf[buf_pos] = kmer_hash;
+					}
+					
+					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
+					{
+						min_hash = kmer_hash;
+						min_pos = buf_pos;
+						min_loc = i;
+						min_flag = 1;
+					}
+
+					if(i>=kmer_len-1)
+					{
+						buf_pos++;
+					}
+
 				}
-				// std::cout << "line 564" << std::endl;
+				// ***********  Kush added this  ***********
+
+			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
+			if (contains_N)
+			{
+				++i;
+				continue;
+			}
+			// std::cout << "Initial current_signature is: " << current_signature.get_string() << std::endl;
+			// std::cout << "Initial end_mmer is: " << end_mmer.get_string() << std::endl;
+
+			for (; i < seq_size; ++i)
+			{
+				// Kush added this
+				uchar letter = seq[i];
+				if(letter>=0){
+					kmer_int = (kmer_int << 2 | letter) & mask1;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^letter) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
+				}
 
 				if(i>=kmer_len-1)
 				{
 					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 					buf[buf_pos] = kmer_hash;
 				}
-
-				// std::cout << "line 572" << std::endl;
 
 				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
 				{
@@ -580,8 +566,6 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 					min_loc = i;
 					min_flag = 1;
 				}
-
-				// std::cout << "line 582" << std::endl;
 
 				if(kmer_hash < min_hash && i>=w_len+kmer_len-1) // smaller kmer found
 				{
@@ -598,25 +582,14 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 					min_flag = 1;
 				}
 
-				// std::cout << "line 599" << std::endl;
-
 				if(buf_pos == min_pos && min_flag == 0 && i>=kmer_len-1) // old minimizer moved out of window
 				{
-					// std::cout << "line 603" << std::endl;
-
 					if(i >= w_len + kmer_len - 1 && min_hash != UINT64_MAX)
 					{
-						// std::cout << "line 607" << std::endl;
-						// std::cout << min_loc << " " << kmer_len << "\n";
 						// add the current minimizer
-						// std::cout << "line 607" << std::endl;
 						current_signature.insert(seq + min_loc - kmer_len + 1);
-						// std::cout << "line 609" << std::endl;
 						_stats[current_signature.get()] += 1;
-						// std::cout << "line 611" << std::endl;
 					}
-
-					// std::cout << "line 612" << std::endl;
 
 					min_hash = UINT64_MAX;
 
@@ -634,9 +607,6 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 						
 						j_counter++;
 					}
-
-					// std::cout << "line 631" << std::endl;
-
 					for (j = 0; j <= buf_pos; ++j)
 					{
 						if (buf[j] <= min_hash)
@@ -648,37 +618,22 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 						j_counter++;
 					}
-
-					// std::cout << "line 645" << std::endl;
 				}
-				// std::cout << "line 647" << std::endl;
 
 				min_flag = 0;
 				if(i>=kmer_len-1)
 				{
 					if (++buf_pos == w_len) buf_pos = 0;
 				}
-				// std::cout << "End of while\n" << std::endl;
-			}
-
-			if (contains_N)
-			{
-				break;
+				
 			}
 		}
 
-		if(!contains_N)
-		{
-			current_signature.insert(seq + min_loc - kmer_len + 1);
-			_stats[current_signature.get()] += 1;
-
-		}
+		current_signature.insert(seq + min_loc - kmer_len + 1);
+		_stats[current_signature.get()] += 1;
 	}
-	
-	// std::cout << "End of last if\n" << std::endl;
 
 	pmm_reads->free(seq);
-	// std::cout << "End of func\n" << std::endl;
 
 	// part = _part;
 	// part_size = _part_size;
@@ -981,70 +936,67 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
 		//	n_reads++;
 		i = 0;
-		bool contains_N = false;
 		while (i + kmer_len - 1 < seq_size)
 		{
+			bool contains_N = false;
 			//building first signature after 'N' or at the read begining
-			// for (uint32 j = 0; j < signature_len; ++j, ++i)
-			// {
-			// 	if (seq[i] < 0)//'N'
-			// 	{
-			// 		contains_N = true;
-			// 		break;
-			// 	}
+			for (uint32 j = 0; j < signature_len; ++j, ++i)
 
-			// 	// ***********  Kush added this  ***********
-			// 	else
-			// 	{
-			// 		kmer_int = (kmer_int << 2 | seq[i]) & mask1;
-			// 		can_int = kmer_int;
-			// 		if (canonical_flag) 
-			// 		{
-			// 			rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
-			// 			if(rcm_kmer_int < kmer_int){
-			// 				can_int = rcm_kmer_int;
-			// 			}
-			// 		}
+				if (seq[i] < 0)//'N'
+				{
+					contains_N = true;
+					break;
+				}
 
-			// 		if(i>=kmer_len-1)
-			// 		{
-			// 			kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-			// 			buf[buf_pos] = kmer_hash;
-			// 		}
+				// ***********  Kush added this  ***********
+				else
+				{
+					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
+					can_int = kmer_int;
+					if (canonical_flag) 
+					{
+						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
+						if(rcm_kmer_int < kmer_int){
+							can_int = rcm_kmer_int;
+						}
+					}
+
+					if(i>=kmer_len-1)
+					{
+						kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
+						buf[buf_pos] = kmer_hash;
+					}
 					
-			// 		if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
-			// 		{
-			// 			min_hash = kmer_hash;
-			// 			min_pos = buf_pos;
-			// 			min_loc = i;
-			// 			min_flag = 1;
-			// 		}
+					if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1)
+					{
+						min_hash = kmer_hash;
+						min_pos = buf_pos;
+						min_loc = i;
+						min_flag = 1;
+					}
 
-			// 		if(i>=kmer_len-1)
-			// 		{
-			// 			buf_pos++;
-			// 		}
+					if(i>=kmer_len-1)
+					{
+						buf_pos++;
+					}
 
-			// 	}
-			// }
-			// ***********  Kush added this  ***********
+				}
+				// ***********  Kush added this  ***********
 
 			//signature must be shorter than k-mer so if signature contains 'N', k-mer will contains it also
-			
+			if (contains_N)
+			{
+				++i;
+				continue;
+			}
 			// std::cout << "Initial current_signature is: " << current_signature.get_string() << std::endl;
 			// std::cout << "Initial end_mmer is: " << end_mmer.get_string() << std::endl;
 
 			for (; i < seq_size; ++i)
 			{
 				// Kush added this
-				if(seq[i] < 0)
-				{
-					++i;
-					contains_N = true;
-					break;
-				}
-				else
-				{
+				uchar letter = seq[i];
+				if(letter>=0){
 					kmer_int = (kmer_int << 2 | seq[i]) & mask1;
 					can_int = kmer_int;
 					if (canonical_flag) 
@@ -1132,20 +1084,11 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 				}
 				
 			}
-			if (contains_N)
-			{
-				// ++i;
-				break;
-				// continue;
-			}
 		}
 
-		if(!contains_N){
-			current_signature.insert(seq + min_loc - kmer_len + 1);
-			bin_no = s_mapper->get_bin_id(current_signature.get());
-			bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
-
-		}
+		current_signature.insert(seq + min_loc - kmer_len + 1);
+		bin_no = s_mapper->get_bin_id(current_signature.get());
+		bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
 	}
 
 	pmm_reads->free(seq);
@@ -1386,10 +1329,6 @@ void CWStatsSplitter::operator()()
 		ReadType read_type;
 		if (spq->pop(part, size, read_type))
 		{
-			// std::cout << part << std::endl;
-			// std::cout << size << std::endl;
-			// std::cout << read_type << std::endl;
-
 			spl->CalcStats(part, size, read_type, stats);
 			progressObserver->Step();
 			pmm_fastq->free(part);

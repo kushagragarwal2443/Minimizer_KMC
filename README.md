@@ -51,4 +51,14 @@ When a read has a N character it gets skipped. Code working.
 
 ---
 
+## Update 6: 21st October through the night
+
+While pushing, the signatures of the forward and reverse strands minimizers werent the same (which is expected). Therefore the output files had 2 entries for many minimizers.
+Solved using *rev (size signature_len) and kmer_strand_buffer[256].
+
+Code working.
+
+Can run ./comp.sh to verify that the bc_dist computed by the code is same as that by Jelly.
+
+---
 

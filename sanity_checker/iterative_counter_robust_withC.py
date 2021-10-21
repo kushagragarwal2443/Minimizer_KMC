@@ -78,6 +78,8 @@ def create_dict(fasta_sequences, k, w):
             if(char_int >= 0):
                 kmer_int = (kmer_int << 2 | char_int) & mask
                 kmer_int_rev = (kmer_int_rev >> 2) | (3^char_int) << shift
+            else:
+                break
                 
                 # print(kmer_int, kmer_int_rev)
             
@@ -98,7 +100,6 @@ def create_dict(fasta_sequences, k, w):
                 else:
                     infox_array.append(infox_rev)
                     is_reverse_array.append(1)
-
 
         array_length = len(infox_array)
         

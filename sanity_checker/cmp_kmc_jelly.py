@@ -22,11 +22,15 @@ with open("kmc") as fp:
         total1 +=1
         line = line[:-1]
         line = line.split("\t")
-        dict1[line[0]] = line[1]
+        # if(line[0] in dict1):
+        #     dict1[line[0]] += int(line[1])
+        # else:
+        #     dict1[line[0]] = int(line[1])
+        dict1[line[0]] = int(line[1])
 
 for fasta2 in fasta_sequences2:
     total2 +=1
-    dict2[str(fasta2.seq)] = fasta2.id
+    dict2[str(fasta2.seq)] = int(fasta2.id)
 
 for key1 in dict1:
 
