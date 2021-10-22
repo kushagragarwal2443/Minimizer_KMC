@@ -80,8 +80,9 @@ public:
 
 };
 
-// KUSH ADDED THIS FUNCTION-----------------------------------------------------------
-// Return the hash of a key
+//----------------------------------------------------------------------------------
+// Added this function which returns a hash for a key
+
 uint64_t CSplitter::hash64(uint64_t key, uint64_t mask) {
 	key = (~key + (key << 21)) & mask; // key = (key << 21) - key - 1;
 	key = key ^ key >> 24;

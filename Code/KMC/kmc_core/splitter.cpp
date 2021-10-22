@@ -9,8 +9,6 @@ Date   : 2019-05-19
 */
 
 #include "splitter.h"
-#include <iostream>
-#include <stdio.h>
 
 //************************************************************************************************************
 // CSplitter class - splits kmers into bins according to their signatures

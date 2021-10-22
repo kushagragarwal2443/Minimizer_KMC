@@ -1,0 +1,166 @@
+STARTING COUNTING FOR HMP1: SRS024075
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS024075_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS024075/SRS024075.fastq"
+	User time (seconds): 814.13
+	System time (seconds): 58.93
+	Percent of CPU this job got: 49%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:23.19
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 549428
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 2
+	Minor (reclaiming a frame) page faults: 160995
+	Voluntary context switches: 9161598
+	Involuntary context switches: 4880
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP1 finished
+
+
+
+STARTING COUNTING FOR HMP2:SRS024388
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS024388_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS024388/SRS024388.fastq"
+	User time (seconds): 692.71
+	System time (seconds): 50.67
+	Percent of CPU this job got: 37%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 32:50.11
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 549428
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 160753
+	Voluntary context switches: 7743266
+	Involuntary context switches: 7321
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP2 finished
+
+
+
+STARTING COUNTING FOR HMP3:SRS011239
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS011239_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS011239/SRS011239.fastq"
+	User time (seconds): 761.30
+	System time (seconds): 56.84
+	Percent of CPU this job got: 36%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 37:12.93
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 549428
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 160865
+	Voluntary context switches: 7980638
+	Involuntary context switches: 6726
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP3 finished
+
+
+
+STARTING COUNTING FOR HMP4:SRS075404
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS075404_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS075404/SRS075404.fastq"
+	User time (seconds): 716.02
+	System time (seconds): 49.56
+	Percent of CPU this job got: 52%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 24:14.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 549428
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 160895
+	Voluntary context switches: 7737314
+	Involuntary context switches: 6393
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP4 finished
+
+
+
+STARTING COUNTING FOR HMP5:SRS043663
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS043663_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS043663/SRS043663.fastq"
+	User time (seconds): 831.78
+	System time (seconds): 54.27
+	Percent of CPU this job got: 43%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 34:04.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1063448
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 335681
+	Voluntary context switches: 8514754
+	Involuntary context switches: 6191
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP5 finished
+
+
+
+STARTING COUNTING FOR HMP6:SRS062761
+	Command being timed: "jellyfish count -C -m 27 -s 10M -t 1 -o ./SRS062761_counts.jf /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS062761/SRS062761.fastq"
+	User time (seconds): 809.80
+	System time (seconds): 54.29
+	Percent of CPU this job got: 40%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 35:30.17
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1063448
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 335626
+	Voluntary context switches: 7687000
+	Involuntary context switches: 7961
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+COUNTING FOR HMP6 finished
+

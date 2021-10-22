@@ -445,27 +445,26 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 	CMmer current_signature(signature_len);
 	uint32 i;
 
-	// KUSH ADDED THESE
-	uint32_t w_len = kmer_len;
-	uint32_t canonical_flag = 1;
-	uint32_t min_flag = 0;
-	uint64_t kmer_int = 0;
-	uint64_t rcm_kmer_int = 0;
-	uint64_t can_int = 0;
-	uint64_t kmer_strand = 0;
-	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
+	// ADDED VARIABLES
+	uint32_t w_len = kmer_len; // Window length. Using w=k for now
+	uint32_t canonical_flag = 1; // 1 for canonical mode and 0 for forward strand only
+	uint32_t min_flag = 0; // checks if a minimizer has already been computed in an iteration
+	uint64_t kmer_int = 0; // Integer representation of a kmer
+	uint64_t rcm_kmer_int = 0; // Integer representation for the reverse complement of a kmer
+	uint64_t can_int = 0; // Stores smaller of hash(kmer_int) and hash(rcm_kmer_int)
+	uint64_t kmer_strand = 0; // 1 if the kmer was from the reverse strand and 0 otherwise
+	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1; // Mask to keep the kmer_int values in range
   	uint64_t shift1 = 2 * (kmer_len-1);
-	uint64_t kmer_hash = UINT64_MAX;
-	uint64_t min_hash = UINT64_MAX;
-	uint64_t min_pos = 0;
-	uint64_t min_loc = 0;
-	uint64_t min_strand = 0;
-	uint64_t buf[256]; // window size should be less than 256
-	uint64_t buf_pos = 0;
-	uint64_t kmer_strand_buf[256];
-	char *rev;
+	uint64_t kmer_hash = UINT64_MAX; // Stores the hash value of the kmer formed
+	uint64_t min_hash = UINT64_MAX; // Stores the hash value of the last minimizer
+	uint64_t min_pos = 0; // Stores index of the last minimizer in the buffer
+	uint64_t min_loc = 0; // Stores the index of the last minimizer in the sequence
+	uint64_t min_strand = 0; // 1 if minimizer was from reverse strand and 0 otherwise
+	uint64_t buf[256]; // buffer to store w kmer_hashes at a time
+	uint64_t buf_pos = 0; // index for the buffer
+	uint64_t kmer_strand_buf[256]; // buffer to store w kmer_strand values at a time
+	char *rev; // stores the reverse complement of a kmer
 	pmm_reads->reserve(rev);
-	// KUSH ADDED THESE
 
 	while (GetSeq(seq, seq_size, read_type))
 	{
@@ -473,8 +472,6 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 		if (homopolymer_compressed)
 			HomopolymerCompressSeq(seq, seq_size);
 
-		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
-		//	n_reads++;
 		i = 0;
 		bool contains_N = false;
 		while (i + kmer_len - 1 < seq_size)
@@ -494,21 +491,21 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 					if (canonical_flag) 
 					{
 						rcm_kmer_int = (rcm_kmer_int >> 2) | (3ULL^seq[i]) << shift1;
-						if(rcm_kmer_int < kmer_int){
+						if(rcm_kmer_int < kmer_int){ // rcm hash is smaller so use that 
 							can_int = rcm_kmer_int;
 							kmer_strand = 1;
 						}
 					}
 				}
 				
-				if(i>=kmer_len-1)
+				if(i>=kmer_len-1) // atleast one full kmer formed
 				{
 					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
-					buf[buf_pos] = kmer_hash;
+					buf[buf_pos] = kmer_hash; // push the kmer hash to the buffer
 					kmer_strand_buf[buf_pos] = kmer_strand;
 				}
 
-				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most in first window
+				if(kmer_hash <= min_hash && i<w_len+kmer_len-1 && i>=kmer_len-1) // get right most minimizer in first window
 				{
 					min_hash = kmer_hash;
 					min_pos = buf_pos;
@@ -522,10 +519,15 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 					if(min_hash != UINT64_MAX)
 					{
 						// add the current minimizer
+						
+						// Minimizer came from forward strand so form the signature as is
 						if(min_strand == 0){
 							current_signature.insert(seq + min_loc - kmer_len + 1);
 							_stats[current_signature.get()] += 1;
 						}
+
+						// Minimizer came from reverse strand. SO rev comp and then form the signature
+						// Ensures that both the kmer and its reverse complement have the same signature so that they are added to the same bins
 						else{
 							
 							for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
@@ -567,14 +569,16 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 					uint32_t j;
 					uint32_t j_counter = 0;
-					// the two loops are necessary when there are identical k-mers
+
+					// Loop over the past window to find the rightmost minimizer
+
 					for (j = buf_pos + 1; j < w_len; ++j)
 					{ 
 						if (buf[j] <= min_hash) //  >= is important s.t. min is always the closest k-mer
 						{
 							min_hash = buf[j];
 							min_pos = j;
-							min_loc = i - w_len + 1 + j_counter;
+							min_loc = i - w_len + 1 + j_counter; // min_loc is j_counter times ahead of the start of the buffer
 							min_strand = kmer_strand_buf[j];
 						} 
 						
@@ -596,13 +600,14 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 				}
 
-				min_flag = 0;
+				min_flag = 0; // reset min_flag to 0 for next run
 				if(i>=kmer_len-1)
 				{
-					if (++buf_pos == w_len) buf_pos = 0;
+					if (++buf_pos == w_len) buf_pos = 0; // if buffer is full overwrite the oldest kmer
 				}
 			}
 
+			// If a read contains an N character ignore the read from there on
 			if (contains_N)
 			{
 				break;
@@ -611,6 +616,8 @@ void CSplitter::CalcStats(uchar* _part, uint64 _part_size, ReadType read_type, u
 
 		if(!contains_N)
 		{
+			// adding the last minimizer in the read
+
 			if(min_strand == 0){
 				current_signature.insert(seq + min_loc - kmer_len + 1);
 				_stats[current_signature.get()] += 1;
@@ -656,7 +663,6 @@ bool CSplitter::ProcessReadsOnlyEstimate(uchar* _part, uint64 _part_size, ReadTy
 // Process the reads from the given FASTQ file part
 bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type)
 {
-	// std::cout << "\nJUST ENTERED PROCESS READS" << std::endl;
 	part = _part;
 	part_size = _part_size;
 	part_pos = 0;
@@ -667,28 +673,28 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 	CMmer current_signature(signature_len);
 	uint32 bin_no;
 	uint32 i;
-	
-	// KUSH ADDED THESE
-	uint32_t w_len = kmer_len;
-	uint32_t canonical_flag = 1;
-	uint32_t min_flag = 0;
-	uint64_t kmer_int = 0;
-	uint64_t rcm_kmer_int = 0;
-	uint64_t can_int = 0;
-	uint64_t kmer_strand = 0;
-	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1;
+
+	// ADDED VARIABLES
+	uint32_t w_len = kmer_len; // Window length. Using w=k for now
+	uint32_t canonical_flag = 1; // 1 for canonical mode and 0 for forward strand only
+	uint32_t min_flag = 0; // checks if a minimizer has already been computed in an iteration
+	uint64_t kmer_int = 0; // Integer representation of a kmer
+	uint64_t rcm_kmer_int = 0; // Integer representation for the reverse complement of a kmer
+	uint64_t can_int = 0; // Stores smaller of hash(kmer_int) and hash(rcm_kmer_int)
+	uint64_t kmer_strand = 0; // 1 if the kmer was from the reverse strand and 0 otherwise
+	uint64_t mask1 = (1ULL<<2 * kmer_len) - 1; // Mask to keep the kmer_int values in range
   	uint64_t shift1 = 2 * (kmer_len-1);
-	uint64_t kmer_hash = UINT64_MAX;
-	uint64_t min_hash = UINT64_MAX;
-	uint64_t min_pos = 0;
-	uint64_t min_loc = 0;
-	uint64_t min_strand = 0;
-	uint64_t buf[256]; // window size should be less than 256
-	uint64_t buf_pos = 0;
-	uint64_t kmer_strand_buf[256];
-	char *rev;
+	uint64_t kmer_hash = UINT64_MAX; // Stores the hash value of the kmer formed
+	uint64_t min_hash = UINT64_MAX; // Stores the hash value of the last minimizer
+	uint64_t min_pos = 0; // Stores index of the last minimizer in the buffer
+	uint64_t min_loc = 0; // Stores the index of the last minimizer in the sequence
+	uint64_t min_strand = 0; // 1 if minimizer was from reverse strand and 0 otherwise
+	uint64_t buf[256]; // buffer to store w kmer_hashes at a time
+	uint64_t buf_pos = 0; // index for the buffer
+	uint64_t kmer_strand_buf[256]; // buffer to store w kmer_strand values at a time
+	char *rev; // stores the reverse complement of a kmer
 	pmm_reads->reserve(rev);
-	// KUSH ADDED THESE
+	
 
 	while (GetSeq(seq, seq_size, read_type))
 	{
@@ -697,15 +703,13 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 
 		if (homopolymer_compressed)
 			HomopolymerCompressSeq(seq, seq_size);
-		//if (file_type != multiline_fasta && file_type != fastq) //read conting moved to GetSeq
-		//	n_reads++;
+		
 		i = 0;
 		bool contains_N = false;
 		while (i + kmer_len - 1 < seq_size)
 		{
 			for (; i < seq_size; ++i)
 			{
-				// Kush added this
 				if(seq[i] < 0)
 				{
 					++i;
@@ -727,7 +731,7 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 					}
 				}
 
-				if(i>=kmer_len-1)
+				if(i>=kmer_len-1) // atleast one full kmer formed
 				{
 					kmer_hash = hash64(can_int, mask1) << 8 | kmer_len;
 					buf[buf_pos] = kmer_hash;
@@ -748,18 +752,23 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 					if(min_hash != UINT64_MAX)
 					{
 						// add the current minimizer
+						
+						// Minimizer came from forward strand so form the signature as is
 						if(min_strand == 0){
 							current_signature.insert(seq + min_loc - kmer_len + 1);
-							bin_no = s_mapper->get_bin_id(current_signature.get());
-							bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
+							bin_no = s_mapper->get_bin_id(current_signature.get()); // compute bin for the minimizer using the signature
+							bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len); // push the minimizer to the allocated bin
 						}
+
+						// Minimizer came from reverse strand. SO rev comp and then form the signature
+						// Ensures that both the kmer and its reverse complement have the same signature so that they are added to the same bins
 						else{
 							
 							for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
 								rev[rev_i] = 3 - (int)seq[min_loc - rev_i];
 							}
 							current_signature.insert(rev);
-							bin_no = s_mapper->get_bin_id(current_signature.get());
+							bin_no = s_mapper->get_bin_id(current_signature.get()); 
 							bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
 						}
 					}
@@ -779,29 +788,12 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 						if(min_strand == 0){
 							current_signature.insert(seq + min_loc - kmer_len + 1);
 							bin_no = s_mapper->get_bin_id(current_signature.get());
-							// std::cout << "GOT NO MINIMIZER: " << min_hash << "\n";
-							// for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
-							// 	std::cout << (int)seq[min_loc - kmer_len + 1 + rev_i];
-							// }
-							// std::cout << "\n";
 							bins[bin_no]->PutExtendedKmer(seq + min_loc - kmer_len + 1, kmer_len);
 						}
 						else{
-
-							// std::cout << "GOT NO MINIMIZER REV: " << min_hash << "\n";
-							// for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
-							// 	std::cout << (int)seq[min_loc - kmer_len + 1 + rev_i];
-							// }
-
 							for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
 								rev[rev_i] = 3 - (int)seq[min_loc - rev_i];
 							}
-
-							// std::cout << "\n";
-							// for(uint32_t rev_i = 0; rev_i < signature_len; rev_i++){
-							// 	std::cout << (int)rev[rev_i];
-							// }
-							// std::cout << "\n";
 
 							current_signature.insert(rev);
 							bin_no = s_mapper->get_bin_id(current_signature.get());
@@ -813,7 +805,9 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 
 					uint32_t j;
 					uint32_t j_counter = 0;
-					// the two loops are necessary when there are identical k-mers
+
+					// Loop over the past window to find the rightmost minimizer
+					
 					for (j = buf_pos + 1; j < w_len; ++j)
 					{ 
 						if (buf[j] <= min_hash) //  >= is important s.t. min is always the closest k-mer
@@ -843,19 +837,20 @@ bool CSplitter::ProcessReads(uchar *_part, uint64 _part_size, ReadType read_type
 				min_flag = 0;
 				if(i>=kmer_len-1)
 				{
-					if (++buf_pos == w_len) buf_pos = 0;
+					if (++buf_pos == w_len) buf_pos = 0; // if buffer is full overwrite the oldest kmer
 				}
 				
 			}
 			if (contains_N)
 			{
-				// ++i;
 				break;
-				// continue;
 			}
 		}
 
 		if(!contains_N){
+
+			// adding the last minimizer in the read
+
 			if(min_strand == 0){
 				current_signature.insert(seq + min_loc - kmer_len + 1);
 				bin_no = s_mapper->get_bin_id(current_signature.get());
@@ -1113,10 +1108,6 @@ void CWStatsSplitter::operator()()
 		ReadType read_type;
 		if (spq->pop(part, size, read_type))
 		{
-			// std::cout << part << std::endl;
-			// std::cout << size << std::endl;
-			// std::cout << read_type << std::endl;
-
 			spl->CalcStats(part, size, read_type, stats);
 			progressObserver->Step();
 			pmm_fastq->free(part);

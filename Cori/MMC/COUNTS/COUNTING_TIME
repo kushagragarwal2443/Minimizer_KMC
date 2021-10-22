@@ -1,0 +1,413 @@
+STARTING COUNTING FOR HMP1: SRS024075
+
+***********************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 20.5641s
+2nd stage: 4.06352s
+Total    : 24.6276s
+Tmp size : 4245MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     53085893
+   No. of unique counted k-mers       :     53085893
+   Total no. of k-mers                :    530699531
+   Total no. of reads                 :    138050470
+   Total no. of super-k-mers          :    530699531
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS024075/SRS024075.fastq output ."
+	User time (seconds): 307.29
+	System time (seconds): 8.08
+	Percent of CPU this job got: 1273%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 8842932
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 3
+	Minor (reclaiming a frame) page faults: 3653289
+	Voluntary context switches: 76788
+	Involuntary context switches: 860
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS024075"
+	User time (seconds): 2.64
+	System time (seconds): 0.59
+	Percent of CPU this job got: 83%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.90
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1277460
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 3
+	Minor (reclaiming a frame) page faults: 319819
+	Voluntary context switches: 5992
+	Involuntary context switches: 4
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+
+STARTING COUNTING FOR HMP2:SRS024388
+
+*******************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 31.9707s
+2nd stage: 3.30744s
+Total    : 35.2782s
+Tmp size : 3791MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     36228087
+   No. of unique counted k-mers       :     36228087
+   Total no. of k-mers                :    473879587
+   Total no. of reads                 :    119684324
+   Total no. of super-k-mers          :    473879587
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS024388/SRS024388.fastq output ."
+	User time (seconds): 273.61
+	System time (seconds): 7.45
+	Percent of CPU this job got: 793%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:35.42
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7583556
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3252271
+	Voluntary context switches: 79664
+	Involuntary context switches: 919
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS024388"
+	User time (seconds): 1.78
+	System time (seconds): 0.53
+	Percent of CPU this job got: 91%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.54
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 983276
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 257118
+	Voluntary context switches: 5084
+	Involuntary context switches: 5
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+
+STARTING COUNTING FOR HMP3:SRS011239
+
+********************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 20.5213s
+2nd stage: 3.50936s
+Total    : 24.0307s
+Tmp size : 4007MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     36775099
+   No. of unique counted k-mers       :     36775099
+   Total no. of k-mers                :    500911823
+   Total no. of reads                 :    123832980
+   Total no. of super-k-mers          :    500911823
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS011239/SRS011239.fastq output ."
+	User time (seconds): 288.39
+	System time (seconds): 8.28
+	Percent of CPU this job got: 1229%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.12
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 8510516
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3491894
+	Voluntary context switches: 76711
+	Involuntary context switches: 772
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS011239"
+	User time (seconds): 1.93
+	System time (seconds): 0.50
+	Percent of CPU this job got: 107%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.26
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1004840
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 261469
+	Voluntary context switches: 5079
+	Involuntary context switches: 4
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+
+STARTING COUNTING FOR HMP4:SRS075404
+
+*******************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 19.9074s
+2nd stage: 3.2609s
+Total    : 23.1683s
+Tmp size : 3809MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     40878284
+   No. of unique counted k-mers       :     40878284
+   Total no. of k-mers                :    476219796
+   Total no. of reads                 :    122090110
+   Total no. of super-k-mers          :    476219796
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS075404/SRS075404.fastq output ."
+	User time (seconds): 276.11
+	System time (seconds): 7.46
+	Percent of CPU this job got: 1216%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.31
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 8139840
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3301833
+	Voluntary context switches: 73575
+	Involuntary context switches: 604
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS075404"
+	User time (seconds): 2.13
+	System time (seconds): 0.48
+	Percent of CPU this job got: 104%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.51
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1031688
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 265643
+	Voluntary context switches: 4986
+	Involuntary context switches: 4
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+
+STARTING COUNTING FOR HMP5:SRS043663
+
+*********************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 35.7637s
+2nd stage: 4.11834s
+Total    : 39.882s
+Tmp size : 4565MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     88107061
+   No. of unique counted k-mers       :     88107061
+   Total no. of k-mers                :    570668258
+   Total no. of reads                 :    130805974
+   Total no. of super-k-mers          :    570668258
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS043663/SRS043663.fastq output ."
+	User time (seconds): 316.81
+	System time (seconds): 8.90
+	Percent of CPU this job got: 813%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:40.01
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 9242044
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3836558
+	Voluntary context switches: 86798
+	Involuntary context switches: 691
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS043663"
+	User time (seconds): 4.25
+	System time (seconds): 0.79
+	Percent of CPU this job got: 103%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.86
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1719216
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 430257
+	Voluntary context switches: 6411
+	Involuntary context switches: 12
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+
+STARTING COUNTING FOR HMP6:SRS062761
+
+*******************
+Stage 1: 100%
+Stage 2: 100%
+1st stage: 25.6733s
+2nd stage: 3.69407s
+Total    : 29.3674s
+Tmp size : 4035MB
+
+Stats:
+   No. of k-mers below min. threshold :            0
+   No. of k-mers above max. threshold :            0
+   No. of unique k-mers               :     94813194
+   No. of unique counted k-mers       :     94813194
+   Total no. of k-mers                :    504472496
+   Total no. of reads                 :    118081524
+   Total no. of super-k-mers          :    504472496
+	Command being timed: "kmc -k27 -ci0 -cs100000000 -cx1000000000 -r -t16 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/DATA/SRS062761/SRS062761.fastq output ."
+	User time (seconds): 283.07
+	System time (seconds): 8.15
+	Percent of CPU this job got: 984%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:29.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 8505760
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3563936
+	Voluntary context switches: 84279
+	Involuntary context switches: 600
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+in1: 100% 
+	Command being timed: "kmc_tools -t16 transform output dump -s SRS062761"
+	User time (seconds): 4.50
+	System time (seconds): 0.86
+	Percent of CPU this job got: 105%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.08
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1760916
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 452064
+	Voluntary context switches: 6668
+	Involuntary context switches: 14
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+

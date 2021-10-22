@@ -1,14 +1,9 @@
 import sys
+import time
 
-def min_val(value1, value2):
-    if(value1 < value2):
-        return value1
-    else:
-        return value2
+def bc_compute(file1, file2):
 
-def bc_compute(file1, file2, file3):
-
-    write_file = open(file3, "w+")
+    start = time.time()
 
     both = []
 
@@ -42,8 +37,7 @@ def bc_compute(file1, file2, file3):
 
             elif(kmer2 == kmer1):
 
-                count_both += min_val(count1, count2)
-                write_file.write(kmer1 + " " + str(count1)+ " " + str(count2)+ " " + str(min_val(count1, count2)) + "\n")
+                count_both += min(count1, count2)
                 count_file1 += count1
                 count_file2 += count2
                 line1 = f1.readline()
@@ -92,19 +86,19 @@ def bc_compute(file1, file2, file3):
 
     
     dist = 1.0 - (2.0 * float(count_both/(count_file1 + count_file2)))
-
-    print(count_file1, count_file2, count_both, dist)
-    write_file.close()
-
-
-
+    end = time.time()
+    
+    print("NUMERATOR:", count_both)
+    print("DENOMINATOR:", count_file1, count_file2)
+    print("BC DISSIMALIRITY:", dist)
+    print(end-start)
+    
 def main():
 
     args = sys.argv
     file1 = str(args[1])
     file2 = str(args[2])
-    file3 = str(args[3])
-    bc_compute(file1, file2, file3)
+    bc_compute(file1, file2)
 
     return
 

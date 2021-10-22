@@ -1,0 +1,224 @@
+HMP2 vs HMP6
+
+NUMERATOR: 1147141
+DENOMINATOR: 473879587 504472496
+BC DISSIMALIRITY: 0.9976549526087123
+TIME TAKEN: 191.2729914188385
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS024388 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS062761"
+	User time (seconds): 128.87
+	System time (seconds): 6.61
+	Percent of CPU this job got: 70%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:11.46
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14684
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 7
+	Minor (reclaiming a frame) page faults: 2274
+	Voluntary context switches: 963196
+	Involuntary context switches: 145
+	Swaps: 0
+	File system inputs: 6296
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP3 vs HMP4
+
+NUMERATOR: 1757269
+DENOMINATOR: 500911823 476219796
+BC DISSIMALIRITY: 0.9964032092180204
+TIME TAKEN: 128.92129683494568
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS011239 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS075404"
+	User time (seconds): 87.09
+	System time (seconds): 4.07
+	Percent of CPU this job got: 70%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:08.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2273
+	Voluntary context switches: 572908
+	Involuntary context switches: 111
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP3 vs HMP5
+
+NUMERATOR: 1147649
+DENOMINATOR: 500911823 570668258
+BC DISSIMALIRITY: 0.9978580247611004
+TIME TAKEN: 194.32189226150513
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS011239 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS043663"
+	User time (seconds): 125.26
+	System time (seconds): 6.69
+	Percent of CPU this job got: 67%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:14.39
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2278
+	Voluntary context switches: 918185
+	Involuntary context switches: 137
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP3 vs HMP6
+
+NUMERATOR: 1182214
+DENOMINATOR: 500911823 504472496
+BC DISSIMALIRITY: 0.9976482346548315
+TIME TAKEN: 297.0693848133087
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS011239 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS062761"
+	User time (seconds): 129.13
+	System time (seconds): 6.84
+	Percent of CPU this job got: 45%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:57.14
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2271
+	Voluntary context switches: 967376
+	Involuntary context switches: 152
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP4 vs HMP5
+
+NUMERATOR: 87737843
+DENOMINATOR: 476219796 570668258
+BC DISSIMALIRITY: 0.8323835243610488
+TIME TAKEN: 191.43198919296265
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS075404 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS043663"
+	User time (seconds): 129.25
+	System time (seconds): 6.65
+	Percent of CPU this job got: 70%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:11.51
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2274
+	Voluntary context switches: 948668
+	Involuntary context switches: 141
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP4 vs HMP6
+
+NUMERATOR: 95991648
+DENOMINATOR: 476219796 504472496
+BC DISSIMALIRITY: 0.8042369685515994
+TIME TAKEN: 259.9217281341553
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS075404 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS062761"
+	User time (seconds): 132.17
+	System time (seconds): 7.08
+	Percent of CPU this job got: 53%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:19.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2272
+	Voluntary context switches: 997853
+	Involuntary context switches: 143
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+
+HMP5 vs HMP6
+
+NUMERATOR: 287568729
+DENOMINATOR: 570668258 504472496
+BC DISSIMALIRITY: 0.46505845317440175
+TIME TAKEN: 287.87910175323486
+	Command being timed: "python3 bc_script.py /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS043663 /global/cfs/cdirs/m3788/projects/min_Jellyfish/SIMULATIONS/bc_distance/Kush_run/MMC/COUNTS/SRS062761"
+	User time (seconds): 198.53
+	System time (seconds): 10.68
+	Percent of CPU this job got: 72%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:47.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 14680
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 2266
+	Voluntary context switches: 1343142
+	Involuntary context switches: 224
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+-----------------------------------------------------------------------------------------
+

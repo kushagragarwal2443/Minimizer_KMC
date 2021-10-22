@@ -62,3 +62,9 @@ Can run ./comp.sh to verify that the bc_dist computed by the code is same as tha
 
 ---
 
+## Update 7: 23rd October night
+
+Code commented.
+
+---
+
