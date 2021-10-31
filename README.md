@@ -68,3 +68,9 @@ Code commented.
 
 ---
 
+## Update 8: 31st October
+
+Added KMC_Random which randomly samples 2/(w+1) of the total number of kmers.
+
+---
+

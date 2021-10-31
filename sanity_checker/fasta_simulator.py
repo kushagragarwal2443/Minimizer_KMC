@@ -25,6 +25,8 @@ def simulate(n, l, error):
                     sequence = sequence + "G"
                 if(c == 3):
                     sequence = sequence + "C"
+                # if(c == 4):
+                #     sequence = sequence + "ATCGGATCAGATCGATGGACTAGATGC"
         write_file.write(">"+str(i)+"\n"+sequence+"\n")
 
     write_file.close()

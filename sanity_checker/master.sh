@@ -2,9 +2,9 @@
 
 # input=../test_red.fastq
 input=simulated_fasta.fasta
-k=24
-w=24
-t=4
+k=27
+w=27
+t=1
 sig=9
 
 n=100
