@@ -12,7 +12,7 @@ def simulate(n, l, error):
     for i in range(num_sequences): 
         sequence = ""
         for j in range(length_sequence):
-            c = random.randint(0,3)
+            c = random.randint(0,4)
             x = random.randint(0,10000)
             if(x < error):
                 sequence = sequence + "N"
@@ -25,8 +25,8 @@ def simulate(n, l, error):
                     sequence = sequence + "G"
                 if(c == 3):
                     sequence = sequence + "C"
-                # if(c == 4):
-                #     sequence = sequence + "ATCGGATCAGATCGATGGACTAGATGC"
+                if(c == 4):
+                    sequence = sequence + "ATCGGATCAGATCGATGGACTAGATGC"
         write_file.write(">"+str(i)+"\n"+sequence+"\n")
 
     write_file.close()
