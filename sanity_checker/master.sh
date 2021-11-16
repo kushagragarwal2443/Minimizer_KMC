@@ -2,19 +2,19 @@
 
 # input=../test_red.fastq
 input=simulated_fasta.fasta
-k=27
-w=27
+k=26
+w=13
 t=1
 sig=9
 
-n=100
-l=10000
+n=500
+l=39
 error=0
 
-cd ../Code/KMC_Oct21
-# make clean
-make
-cd -
+# cd ../Code/KMC_Oct21
+# # make clean
+# make
+# cd -
 
 python3 fasta_simulator.py $n $l $error
 
@@ -28,10 +28,18 @@ python3 fasta_simulator.py $n $l $error
 # kmc_tools -t$t transform output dump -s kmc
 
 python3 iterative_counter_robust_withC.py $k $w $input
-kmc -p$sig -t$t -k$k -ci0 -fm $input output .
-kmc_tools -t$t transform output dump -s kmc
+
+# kmc -p$sig -t$t -k$k -ci0 -fm $input output .
+# kmc_tools -t$t transform output dump -s kmc
+
+# echo
+# echo
+
+mmc -t$t -k$k -wv$w -ci0 -fm $input output .
+mmc_tools -t$t transform output dump -s kmc
 
 echo
 echo
 echo
+
 python3 cmp_kmc_jelly.py

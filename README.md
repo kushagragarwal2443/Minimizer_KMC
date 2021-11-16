@@ -74,3 +74,9 @@ Added KMC_Random which randomly samples 2/(w+1) of the total number of kmers.
 
 ---
 
+## Update 9: 16th November
+
+Added condition w+k-1<=read_length. Use master.sh to compare the mmc code and the python code. wv paramter also got added in MMC code.
+
+---
+
