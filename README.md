@@ -80,3 +80,12 @@ Added condition w+k-1<=read_length. Use master.sh to compare the mmc code and th
 
 ---
 
+## Update 10: 11th February
+
+Handled N characters properly. Instead of breaking off a read as soon as a N character was observed; skipped it and started a new window from the next character. Analogous to breaking off the read at all the N characters.
+
+Added iterative_counter_robust_withC_withN.py to check for correctness when reads have N characters as well.
+
+
+---
+
